@@ -12,7 +12,12 @@ export const store = configureStore({
   // then warnings will be printed.
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware({
+      // Disable middleware for production
       immutableCheck: () => process.env.NODE_ENV !== 'production',
+      serializableCheck: {
+        ignoreState: () => process.env.NODE_ENV !== 'production',
+        ignoreActions: () => process.env.NODE_ENV !== 'production',
+      },
     }).prepend(sampleApi.middleware);
   },
   devTools: process.env.NODE_ENV !== 'production',
