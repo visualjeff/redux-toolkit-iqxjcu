@@ -24,4 +24,5 @@ store.subscribe(() => {
 });
 */
 
-// setupListeners(store.dispatch);
+// Configure listeners with recommended defaults for refetchOnFocus and refetchOnReconnect
+setupListeners(store.dispatch);
