@@ -1,7 +1,10 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, createListenerMiddleware } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import NotificationsReducer from './notificationsSlice';
 import { sampleApi } from '../services/sampleApiSlice';
+
+// Create the middleware instance and methods
+const listenerMiddleware = createListenerMiddleware()
 
 export const store = configureStore({
   reducer: {
