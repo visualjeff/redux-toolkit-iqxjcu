@@ -8,8 +8,12 @@ export const store = configureStore({
     NotificationsReducer,
     [sampleApi.reducerPath]: sampleApi.reducer,
   },
+  // To disable the immutableCheck if necessary.  If actions take more than 32ms
+  // then warnings will be printed.
   middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().prepend(sampleApi.middleware);
+    return getDefaultMiddleware({
+      immutableCheck: () => process.env.NODE_ENV !== 'production',
+    }).prepend(sampleApi.middleware);
   },
   devTools: process.env.NODE_ENV !== 'production',
 });
@@ -20,4 +24,4 @@ store.subscribe(() => {
 });
 */
 
-setupListeners(store.dispatch);
+// setupListeners(store.dispatch);
