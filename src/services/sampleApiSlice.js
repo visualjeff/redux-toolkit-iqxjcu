@@ -7,7 +7,6 @@ export const sampleApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://jsonplaceholder.typicode.com',
     prepareHeaders: (headers, { getState }) => {
-      // console.log(`state: ${JSON.stringify(getState())}`);
       const token = getState()?.auth?.token;
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
@@ -21,15 +20,14 @@ export const sampleApi = createApi({
       transformResponse: (response) => response, // optional
       providesTags: ['Users'],
       async onQueryStarted(id, { dispatch, queryFulfilled }) {
-        // `onStart` side-effect
+        // `onStart` side-effect, dispatch action
         dispatch(messageCreated('Fetching users...'));
         try {
           const { data } = await queryFulfilled;
-          // console.log(`data: ${JSON.stringify(data)}`);
-          // `onSuccess` side-effect
+          // `onSuccess` side-effect, dispatch action
           dispatch(messageCreated('Users received!'));
         } catch (err) {
-          // `onError` side-effect
+          // `onError` side-effect, dispatch action
           // { error: { status: 500, data: { message: 'error reasons' } }
           dispatch(messageCreated('Error fetching users!'));
         }
@@ -40,15 +38,14 @@ export const sampleApi = createApi({
       transformResponse: (response) => response, // optional
       providesTags: ['User'],
       async onQueryStarted(id, { dispatch, queryFulfilled }) {
-        // `onStart` side-effect
+        // `onStart` side-effect, dispatch action
         dispatch(messageCreated('Fetching user...'));
         try {
           const { data } = await queryFulfilled;
-          // console.log(`data: ${JSON.stringify(data)}`);
-          // `onSuccess` side-effect
+          // `onSuccess` side-effect, dispatch action
           dispatch(messageCreated('User received!'));
         } catch (err) {
-          // `onError` side-effect
+          // `onError` side-effect, dispatch action
           // { error: { status: 500, data: { message: 'error reasons' } }
           dispatch(messageCreated('Error fetching user!'));
         }
@@ -59,15 +56,14 @@ export const sampleApi = createApi({
       transformResponse: (response) => response, // optional
       providesTags: ['Posts'],
       async onQueryStarted(id, { dispatch, queryFulfilled }) {
-        // `onStart` side-effect
+        // `onStart` side-effect, dispatch action
         dispatch(messageCreated('Fetching posts...'));
         try {
           const { data } = await queryFulfilled;
-          // console.log(`data: ${JSON.stringify(data)}`);
-          // `onSuccess` side-effect
+          // `onSuccess` side-effect, dispatch action
           dispatch(messageCreated('Posts received!'));
         } catch (err) {
-          // `onError` side-effect
+          // `onError` side-effect, dispatch action
           // { error: { status: 500, data: { message: 'error reasons' } }
           dispatch(messageCreated('Error fetching posts!'));
         }
@@ -80,12 +76,13 @@ export const sampleApi = createApi({
         return response;
       }, // optional
       providesTags: ['Post'],
+      // We can monitor the progress of the query
       async onQueryStarted(body, { dispatch, queryFulfilled, getState }) {
-        // `onStart` side-effect
+        // `onStart` side-effect, dispatch action
         dispatch(messageCreated('Fetching post...'));
         try {
           const { data } = await queryFulfilled;
-          // `onSuccess` side-effect
+          // `onSuccess` side-effect, dispatch action
           dispatch(messageCreated('Post received!'));
 
           // Get user Name associated with the post using userId as the key
@@ -94,11 +91,9 @@ export const sampleApi = createApi({
           const { data: user } = await sampleApi.endpoints.getUser.initiate(
             data.userId
           )(dispatch, getState);
-
-          console.log(`getUser user: ${JSON.stringify(user)}`);
           */
         } catch (err) {
-          // `onError` side-effect
+          // `onError` side-effect, dispatch action
           // { error: { status: 500, data: { message: 'error reasons' } }
           dispatch(messageCreated('Error fetching post!'));
         }
@@ -107,19 +102,20 @@ export const sampleApi = createApi({
     getUserPost: builder.query({
       // An example of executing two queries for a custom return value.
       async queryFn(_arg, _queryApi, _extraOptions, fetchWithBQ) {
+        // First query
         const post = await fetchWithBQ(`posts/${_arg}`);
         if (post.error) return { error: post.error };
         const postData = post.data;
+        // Second query
         const user = await fetchWithBQ(`/users/${postData.userId}`);
         const userData = user.data;
-        // console.log(`userData: ${JSON.stringify(userData)}`);
+        // Merge results from two queries
         const result = {
           data: {
             ...postData,
             name: userData.name,
           },
         };
-        // console.log(`result: ${JSON.stringify(result)}`);
         return result.data ? { data: result.data } : { error: result.error };
       },
     }),
