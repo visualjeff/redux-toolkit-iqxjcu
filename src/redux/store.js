@@ -1,10 +1,23 @@
-import { configureStore, createListenerMiddleware } from '@reduxjs/toolkit';
+import {
+  configureStore,
+  createListenerMiddleware,
+  isAnyOf,
+} from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
-import NotificationsReducer from './notificationsSlice';
+import NotificationsReducer, { messageCreated } from './notificationsSlice';
 import { sampleApi } from '../services/sampleApiSlice';
 
 // Create the middleware instance and methods
-const listenerMiddleware = createListenerMiddleware()
+const listenerMiddleware = createListenerMiddleware();
+
+// Just to test listeners.  When the Notifcation.messageCreated action fires this
+// Listener will log a message.
+listenerMiddleware.startListening({
+  matcher: isAnyOf(messageCreated),
+  effect: (action, listenerApi) => {
+    console.log('Listener API fired effect');
+  },
+});
 
 export const store = configureStore({
   reducer: {
@@ -21,7 +34,9 @@ export const store = configureStore({
         ignoreState: () => process.env.NODE_ENV !== 'production',
         ignoreActions: () => process.env.NODE_ENV !== 'production',
       },
-    }).prepend(sampleApi.middleware);
+    })
+      .prepend(sampleApi.middleware)
+      .prepend(listenerMiddleware.middleware);
   },
   devTools: process.env.NODE_ENV !== 'production',
 });
