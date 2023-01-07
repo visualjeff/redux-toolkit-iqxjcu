@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 
 const initialState = {
   message: '',
@@ -15,6 +15,16 @@ const notificationsSlice = createSlice({
     },
   },
 });
+
+// Listeners
+export const addNotificationsListeners = (startListening) => {
+  startListening({
+    actionCreator: messageCreated,
+    effect: (action, listenerApi) => {
+      console.log('Listener API fired effect');
+    },
+  });
+};
 
 // Action creators are generated for each case reducer function
 export const { messageCreated } = notificationsSlice.actions;
