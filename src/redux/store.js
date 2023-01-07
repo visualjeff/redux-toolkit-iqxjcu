@@ -5,6 +5,7 @@ import {
 } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import NotificationsReducer, { messageCreated } from './notificationsSlice';
+import CounterReducer from './counterSlice';
 import { sampleApi } from '../services/sampleApiSlice';
 
 // Create the middleware instance and methods
@@ -21,6 +22,7 @@ listenerMiddleware.startListening({
 
 export const store = configureStore({
   reducer: {
+    CounterReducer,
     NotificationsReducer,
     [sampleApi.reducerPath]: sampleApi.reducer,
   },

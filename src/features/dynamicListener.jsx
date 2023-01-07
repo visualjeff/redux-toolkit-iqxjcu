@@ -1,27 +1,23 @@
 import { useState } from 'react';
-import { Box, Button } from '@mui/material';
-import { sampleApi } from '../services/sampleApiSlice';
-import { Link } from 'react-router-dom';
-
-function Post({ id, title }) {
-  return (
-    <Link to={`/postDetail/${id}`}>
-      {id} - {title}
-    </Link>
-  );
-}
+import { useSelector, useDispatch } from 'react-redux';
+import { decrement, increment } from '../redux/counterSlice';
+import { addListener, removeListener } from '@reduxjs/toolkit';
+import { useEffect } from 'react';
+import { store } from '../redux/store';
 
 function DynamicListener() {
-  const handleEvent = () => {
-    trigger('posts');
-  };
+  const count = useSelector((state) => state.CounterReducer.value);
+  const dispatch = useDispatch();
+
+  const [message, setMessage] = useState();
 
   useEffect(() => {
-    const unsubscribe = dispatch(
+    // Not recommended but does work
+    const unsubscribe = store.dispatch(
       addListener({
-        actionCreator: todoAdded,
+        actionCreator: increment,
         effect: (action, listenerApi) => {
-          // do some useful logic here
+          setMessage(`${action.type} fired`);
         },
       })
     );
@@ -29,24 +25,27 @@ function DynamicListener() {
   }, []);
 
   return (
-    <Box flexBasis="100%" flexDirection="column" alignItems="stretch">
-      {result && !result?.isSuccess && (
-        <Button
-          variant="contained"
+    <div>
+      <div>
+        <button
+          aria-label="Increment value"
+          onClick={() => dispatch(increment())}
+        >
+          Increment
+        </button>
+        <span>{count}</span>
+        <button
+          aria-label="Decrement value"
           onClick={() => {
-            handleEvent();
+            setMessage('');
+            dispatch(decrement());
           }}
         >
-          Dispatch
-        </Button>
-      )}
-
-      <p>Cancel Active Listeners</p>
-      <p>Listener makes a service call</p>
-      <p>Pause Listeners until action takes place or state changes</p>
-      <p>Use the listener API methods to dispatch, get state</p>
-      <p>Spawn "child tasks"</p>
-    </Box>
+          Decrement
+        </button>
+      </div>
+      {message}
+    </div>
   );
 }
 
