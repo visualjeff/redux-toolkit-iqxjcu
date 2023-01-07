@@ -5,6 +5,7 @@ import './App.css';
 import ImmediateLoad from './features/immediateLoad';
 import Dispatched from './features/dispatched';
 import PostDetail from './features/postDetail';
+import DynamicListener from './features/dynamicListener';
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="immediateLoad" element={<ImmediateLoad />} />
           <Route path="dispatched" element={<Dispatched />} />
           <Route path="postDetail/:id" element={<PostDetail />} />
+          <Route path="dynamicListener" element={<DynamicListener />} />
 
           {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit
@@ -56,6 +58,9 @@ function Layout() {
           </li>
           <li>
             <Link to="/dispatched">Dispatched</Link>
+          </li>
+          <li>
+            <Link to="/dynamicListener">Dynamic Listener</Link>
           </li>
           <li>
             <Link to="/nothing-here">Nothing Here</Link>
